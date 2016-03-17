@@ -49,5 +49,6 @@
 - (void)reloadData;
 - (NSInteger)moveToPositionWithEndScrollEvent:(UIScrollView *)scrollView;
 - (CGSize)currentSizeOfCellWithString:(NSString *)contentString;
+- (void)goToPositionWithIndex:(NSInteger)index;
 
 @end

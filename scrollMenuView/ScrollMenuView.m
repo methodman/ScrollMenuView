@@ -280,4 +280,34 @@ const CGFloat paddigSize = 30.0f;
     }
 }
 
+
+//================================================================================
+//
+//================================================================================
+- (void)goToPositionWithIndex:(NSInteger)index {
+
+    CGFloat forwardPosition = 0;
+    ScrollMenuCell *initMenuCell = [self.arrayOfCell objectAtIndex:0];
+    ScrollMenuCell *currentMenuCell = [self.arrayOfCell objectAtIndex:index];
+    
+    if (index > 0) {
+        
+        forwardPosition = initMenuCell.sizeOfCell.width / 2 + self.padding * index + currentMenuCell.sizeOfCell.width / 2;
+        
+        for (NSInteger i = 1; i <= (currentMenuCell.indexOfCell - 1); i++) {
+            
+            ScrollMenuCell *middleMenuCell = [self.arrayOfCell objectAtIndex:i];
+            forwardPosition += middleMenuCell.sizeOfCell.width;
+        }
+    }
+    else {
+        
+        forwardPosition = 0;
+    }
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        [self setContentOffset:CGPointMake(forwardPosition, 0)];
+    }];
+}
+
 @end

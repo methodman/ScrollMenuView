@@ -129,7 +129,7 @@
 //================================================================================
 - (void)scrollMenuView:(ScrollMenuView *)scrollMenuView didTapPageAtIndex:(NSInteger)index {
     
-    NSLog(@"click cell at %ld",index);
+    // NSLog(@"click cell at %ld",index);
     
     if ([self.delegate respondsToSelector:@selector(endScrollingAction:index:)]) {
         
@@ -169,6 +169,16 @@
         [self.delegate endScrollingAction:self index:index];
     }
 }
+
+
+//================================================================================
+//
+//================================================================================
+- (void)scrollingPostionWithIndex:(NSInteger)index
+{
+    [self.scrollMenuView goToPositionWithIndex:index];
+}
+
 @end
 
 

@@ -31,4 +31,6 @@
 @property (nonatomic, assign) CGFloat viewInPositionY;
 @property (nonatomic, assign) CGFloat scrollViewHeight;
 
+- (void)scrollingPostionWithIndex:(NSInteger)index;
+
 @end

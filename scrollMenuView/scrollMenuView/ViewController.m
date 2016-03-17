@@ -33,7 +33,7 @@
     // 1. (View) 初始化menuView，設置frame大小
     // 目前切圖預設高度為44，Y位置貼齊navgation bar
     CGRect menuViewRect = CGRectMake(0,
-                                     100,
+                                     200,
                                      [[UIScreen mainScreen] bounds].size.width,
                                      44);
     _menuView = [[MenuView alloc] initWithFrame:menuViewRect];
@@ -70,6 +70,10 @@
                                                                  10)];
     arrowView.backgroundColor = [UIColor blackColor];
     [self.view addSubview:arrowView];
+    
+    //////////////////////////////////////////////////
+    // 移動到指定的index
+    [self.menuView scrollingPostionWithIndex:3];
 }
 
 
