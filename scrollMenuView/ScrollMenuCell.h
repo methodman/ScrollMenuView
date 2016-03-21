@@ -15,5 +15,6 @@
 @property (nonatomic, assign) NSInteger indexOfCell;
 @property (nonatomic, assign) CGFloat leftBoundPosition;
 @property (nonatomic, assign) CGFloat rightBoundPosition;
+@property (nonatomic, retain) UIView  *cellTextView;
 
 @end

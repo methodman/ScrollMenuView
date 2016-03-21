@@ -32,5 +32,6 @@
 @property (nonatomic, assign) CGFloat scrollViewHeight;
 
 - (void)scrollingPostionWithIndex:(NSInteger)index;
+- (void)setLeftRightWithGradientImage:(UIImage *)leftImage rightImage:(UIImage *)rightImage;
 
 @end

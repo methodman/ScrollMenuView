@@ -51,6 +51,7 @@ const CGFloat paddigSize = 30.0f;
 //================================================================================
 - (void)initializeSetup
 {
+    _currentSelectedIndex = 0;
     self.clipsToBounds = NO;
     self.pagingEnabled = NO;
     self.showsHorizontalScrollIndicator = NO;
@@ -114,14 +115,18 @@ const CGFloat paddigSize = 30.0f;
         
         float topY = (self.frame.size.height - scrollMenuCell.sizeOfCell.height);
         
-        UIView *cellView = [self.dataSource scrollMenuView:self viewForRowAtIndex:i];
-        cellView.frame = CGRectMake(startX,
-                                    topY,
-                                    scrollMenuCell.sizeOfCell.width,
-                                    scrollMenuCell.sizeOfCell.height);
-        [self addSubview:cellView];
+        //ScrollMenuCell *addMenuCell = [[ScrollMenuCell alloc] init];
+        
+        scrollMenuCell.cellTextView = [self.dataSource scrollMenuView:self viewForRowAtIndex:i];
+        scrollMenuCell.cellTextView.frame = CGRectMake(startX,
+                                                    topY,
+                                                    scrollMenuCell.sizeOfCell.width,
+                                                    scrollMenuCell.sizeOfCell.height);
+        
+        [self addSubview:scrollMenuCell.cellTextView];
         
         //////////////////////////////////////////////////
+        
         
         if (i == 0) {
             // 這邊特別在index = 0時減去寬度的1/2作為left bound是因為初始位置0位於第一個menu cell的中間
@@ -165,6 +170,7 @@ const CGFloat paddigSize = 30.0f;
     for (NSInteger i = 0; i < self.numberOfCell; i++) {
         
         ScrollMenuCell *currentMenuCell = [self.arrayOfCell objectAtIndex:i];
+        
         detectedLeftBound = currentMenuCell.leftBoundPosition - initPosition - (self.padding / 2);
         detectedRightBound = currentMenuCell.rightBoundPosition - initPosition + (self.padding / 2);
         
@@ -174,6 +180,9 @@ const CGFloat paddigSize = 30.0f;
                 // 用右邊界來算比較簡潔，不要用左邊界，會有起始位置的問題
                 [self setContentOffset:CGPointMake(detectedRightBound - (self.padding / 2) - (currentMenuCell.sizeOfCell.width / 2) , 0)];
             }];
+            
+            self.currentSelectedIndex = i;
+            
             return i;
         }
     }
@@ -309,5 +318,7 @@ const CGFloat paddigSize = 30.0f;
         [self setContentOffset:CGPointMake(forwardPosition, 0)];
     }];
 }
+
+
 
 @end

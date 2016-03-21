@@ -60,6 +60,13 @@
     //////////////////////////////////////////////////
     // 4. ********* 必須call一次reloadData，將整個scrollview設置完成  *********
     [self.menuView.scrollMenuView reloadData];
+    
+    //////////////////////////////////////////////////
+    // 5.setting left and right gradient image
+    UIImage *leftImage = [UIImage imageNamed:@"shadow_left"];
+    UIImage *rightImage = [UIImage imageNamed:@"shadow_right"];
+    [self.menuView setLeftRightWithGradientImage:leftImage rightImage:rightImage];
+    
     [self.view addSubview:self.menuView];
     
     //////////////////////////////////////////////////

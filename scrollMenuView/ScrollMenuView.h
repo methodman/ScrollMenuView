@@ -45,6 +45,7 @@
 @property (nonatomic, retain) NSMutableArray *arrayOfCell;
 @property (nonatomic, assign) NSInteger numberOfCell;
 @property (nonatomic, assign) CGFloat padding;
+@property (nonatomic, assign) NSInteger currentSelectedIndex;
 
 - (void)reloadData;
 - (NSInteger)moveToPositionWithEndScrollEvent:(UIScrollView *)scrollView;
