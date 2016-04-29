@@ -11,6 +11,12 @@
 
 #import "ScrollMenuCell.h"
 
+typedef NS_ENUM(NSUInteger, MenuViewType) {
+    MenuViewDefaultType  = 0,
+    MenuViewPiinLifeType = 1,
+    MenuViewRegularsType = 2
+};
+
 @class ScrollMenuView;
 
 //////////////////////////////////////////////////
@@ -42,14 +48,15 @@
 @property (nonatomic, assign) id<ScrollMenuViewDataSource> dataSource;
 @property (nonatomic, assign) id<ScrollMenuViewDelegate> delegate;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGesture;
-@property (nonatomic, retain) NSMutableArray *arrayOfCell;
-@property (nonatomic, assign) NSInteger numberOfCell;
+@property (nonatomic, retain) NSMutableArray *cellArray;
+@property (nonatomic, assign) NSInteger cellNumber;
 @property (nonatomic, assign) CGFloat padding;
 @property (nonatomic, assign) NSInteger currentSelectedIndex;
+@property (nonatomic, assign) MenuViewType menuViewType;
 
-- (void)reloadData;
-- (NSInteger)moveToPositionWithEndScrollEvent:(UIScrollView *)scrollView;
-- (CGSize)currentSizeOfCellWithString:(NSString *)contentString;
+- (BOOL)hasDataToReloadWithRefreshFlag:(BOOL)isFreshView;
 - (void)goToPositionWithIndex:(NSInteger)index;
+- (NSInteger)IndexFromSelectionPositionWithEndScrollEvent:(UIScrollView *)scrollView;
+- (CGSize)currentSizeOfCellWithScrollMenuCell:(ScrollMenuCell *)scrollMenuCell;
 
 @end

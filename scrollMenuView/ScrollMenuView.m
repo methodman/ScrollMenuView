@@ -18,14 +18,14 @@
 
 @dynamic delegate;
 
-const CGFloat paddigSize = 30.0f;
+const CGFloat paddigSize = 4.0f;
 
 #pragma mark -
 #pragma mark - init & dealloc
 //================================================================================
 //
 //================================================================================
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     
     self = [super initWithFrame:frame];
     
@@ -34,40 +34,9 @@ const CGFloat paddigSize = 30.0f;
     if (self) {
         
         [self initializeSetup];
-        //[self reloadData];
     }
     
     return self;
-}
-
-
-
-
-
-#pragma mark - 
-#pragma mark - Class Method
-//================================================================================
-//
-//================================================================================
-- (void)initializeSetup
-{
-    _currentSelectedIndex = 0;
-    self.clipsToBounds = NO;
-    self.pagingEnabled = NO;
-    self.showsHorizontalScrollIndicator = NO;
-    self.showsVerticalScrollIndicator = NO;
-    self.autoresizesSubviews = NO;
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.multipleTouchEnabled = NO;
-    self.decelerationRate = UIScrollViewDecelerationRateFast;
-    
-    //////////////////////////////////////////////////
-    
-    _arrayOfCell = [NSMutableArray array];
-    _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    [self.tapGesture setNumberOfTapsRequired:1];
-    [self.tapGesture setNumberOfTouchesRequired:1];
-    [self addGestureRecognizer:self.tapGesture];
 }
 
 
@@ -79,106 +48,237 @@ const CGFloat paddigSize = 30.0f;
 //================================================================================
 //
 //================================================================================
-- (void)reloadData {
-    
+- (BOOL)hasDataToReloadWithRefreshFlag:(BOOL)isFreshView {
+
+    BOOL hasData = NO;
+
     if (!self.delegate || ![self.delegate respondsToSelector:@selector(numberOfPageInScrollMenuView:)]) {
         
-        return;
+        return hasData;
     }
     
     if (!self.dataSource || ![self.dataSource respondsToSelector:@selector(scrollMenuView:viewForRowAtIndex:)]) {
         
-        return;
+        return hasData;
     }
     
     _padding = paddigSize;
     
-    _numberOfCell = [self.delegate numberOfPageInScrollMenuView:self];
-    
-    float startX = 0;
+    _cellNumber = [self.delegate numberOfPageInScrollMenuView:self];
     
     [[self subviews] makeObjectsPerformSelector: @selector(removeFromSuperview)];
     
+    if (isFreshView) {
     
-    for (NSInteger i = 0; i < self.numberOfCell; i++) {
+        [_cellArray  removeAllObjects];
+        [self.cellArray removeAllObjects];
+        
+        for (UIView *subView in self.subviews) {
+            
+            if (![subView isKindOfClass:[ScrollMenuCell class]]) { // 檢查contents內皆為ExpandTableViewData
+                
+                [subView removeFromSuperview];
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////
+    
+    UIColor *selectedColor = nil;
+    UIColor *unSelectedColor = nil;
+    
+    switch (self.menuViewType) {
+            
+        case MenuViewDefaultType:
+            selectedColor = [UIColor colorWithRed: 199/255.0f green: 0/255.0f blue: 0/255.0f alpha:1.0f];
+            unSelectedColor = [UIColor colorWithRed: 102/255.0f green: 102/255.0f blue: 102/255.0f alpha:1.0f];
+            break;
+            
+        case MenuViewPiinLifeType:
+            selectedColor = [UIColor whiteColor];
+            unSelectedColor = [UIColor whiteColor];
+            break;
+            
+        case MenuViewRegularsType:
+            selectedColor = [UIColor colorWithRed: 199/255.0f green: 0/255.0f blue: 0/255.0f alpha:1.0f];
+            unSelectedColor = [UIColor colorWithRed: 102/255.0f green: 102/255.0f blue: 102/255.0f alpha:1.0f];
+            break;
+            
+        default:
+            selectedColor = [UIColor colorWithRed: 199/255.0f green: 0/255.0f blue: 0/255.0f alpha:1.0f];
+            unSelectedColor = [UIColor colorWithRed: 102/255.0f green: 102/255.0f blue: 102/255.0f alpha:1.0f];
+            break;
+    }
+    
+    //////////////////////////////////////////////////
+    
+    float startX = 0;
+    
+    for (NSInteger i = 0; i < self.cellNumber; i++) {
         
         ScrollMenuCell *scrollMenuCell = [[ScrollMenuCell alloc] init];
         
         if ([self.delegate respondsToSelector:@selector(sizeCellForScrollMenuView:index:)]) {
             
-            scrollMenuCell.sizeOfCell = [self.delegate sizeCellForScrollMenuView:self index:i];
+            scrollMenuCell.cellSize = [self.delegate sizeCellForScrollMenuView:self index:i];
+            scrollMenuCell.selectedColor = selectedColor;
+            scrollMenuCell.unSelectedColor = unSelectedColor;
         }
         
-        scrollMenuCell.indexOfCell = i;
+        scrollMenuCell.cellIndex = i;
         
         //////////////////////////////////////////////////
         
-        float topY = (self.frame.size.height - scrollMenuCell.sizeOfCell.height);
+        float topY = (self.frame.size.height - scrollMenuCell.cellSize.height - 3); // 3 = (陰影圖的高度 / 2)
         
-        //ScrollMenuCell *addMenuCell = [[ScrollMenuCell alloc] init];
-        
-        scrollMenuCell.cellTextView = [self.dataSource scrollMenuView:self viewForRowAtIndex:i];
+        scrollMenuCell.cellTextView = (ScrollMenuCellSubView *)[self.dataSource scrollMenuView:self viewForRowAtIndex:i];
         scrollMenuCell.cellTextView.frame = CGRectMake(startX,
-                                                    topY,
-                                                    scrollMenuCell.sizeOfCell.width,
-                                                    scrollMenuCell.sizeOfCell.height);
+                                                       topY,
+                                                       scrollMenuCell.cellSize.width,
+                                                       scrollMenuCell.cellSize.height);
+        
+        UIImage *arrowImage = [UIImage imageNamed:@"ch_drop_down_arrow_red"];
+        [scrollMenuCell.cellTextView.arrowImageView setImage:arrowImage];
+        
+        if (self.currentSelectedIndex == scrollMenuCell.cellIndex) {
+            
+            scrollMenuCell.isSelected = YES;
+            
+            for (UIView *textView in scrollMenuCell.cellTextView.subviews) {
+                
+                if([textView isKindOfClass:[UILabel class]]) {
+                    
+                    ((UILabel *)textView).textColor = scrollMenuCell.selectedColor;
+                    
+                    if (scrollMenuCell.cellTextView.arrowImageView) {
+                        
+                        if (scrollMenuCell.cellTextView.hasLevel0ChildToExpand) {
+    
+                            [scrollMenuCell.cellTextView.arrowImageView setHidden:NO];
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            
+            scrollMenuCell.isSelected = NO;
+            
+            for (UIView *textView in scrollMenuCell.cellTextView.subviews) {
+                
+                if([textView isKindOfClass:[UILabel class]]) {
+                    
+                    ((UILabel *)textView).textColor = scrollMenuCell.unSelectedColor;
+                    
+                    if (scrollMenuCell.cellTextView.arrowImageView) {
+                        
+                        [scrollMenuCell.cellTextView.arrowImageView setHidden:YES];
+                    }
+                }
+            }
+        }
         
         [self addSubview:scrollMenuCell.cellTextView];
         
         //////////////////////////////////////////////////
         
-        
         if (i == 0) {
             // 這邊特別在index = 0時減去寬度的1/2作為left bound是因為初始位置0位於第一個menu cell的中間
-            scrollMenuCell.leftBoundPosition = startX - (scrollMenuCell.sizeOfCell.width / 2);
+            scrollMenuCell.leftBoundPosition = startX - (scrollMenuCell.cellSize.width / 2);
         }
         else {
             
             scrollMenuCell.leftBoundPosition = startX;
         }
         
-        startX += scrollMenuCell.sizeOfCell.width;
+        startX += scrollMenuCell.cellSize.width;
         scrollMenuCell.rightBoundPosition = startX;
         startX += self.padding;
         
-        [self.arrayOfCell addObject:scrollMenuCell];
+        [self.cellArray addObject:scrollMenuCell];
+      
     }
     
     //////////////////////////////////////////////////
     
-    ScrollMenuCell *initMenuCell = [self.arrayOfCell objectAtIndex:0];
-    self.frame = CGRectMake(([[UIScreen mainScreen] bounds].size.width - initMenuCell.sizeOfCell.width) / 2,
-                            0,
-                            initMenuCell.sizeOfCell.width,
-                            44);
+    if ([self.cellArray count] > 0) {
+        
+        hasData = YES;
+        
+        ScrollMenuCell *initMenuCell = [self.cellArray objectAtIndex:0];
+        
+        self.frame = CGRectMake(([[UIScreen mainScreen] bounds].size.width - initMenuCell.cellSize.width) / 2,
+                                0,
+                                initMenuCell.cellSize.width,
+                                44);
+        
+        CGFloat scrollViewSizeWith = startX - self.padding; // 扣除最後一格無須padding
+        self.contentSize = CGSizeMake(scrollViewSizeWith, 1);
+    }
     
-    CGFloat scrollViewSizeWith = startX - self.padding; // 扣除最後一格無須padding
-    self.contentSize = CGSizeMake(scrollViewSizeWith, 1);
+    return hasData;
+}
+
+
+//================================================================================
+//
+//================================================================================
+- (void)goToPositionWithIndex:(NSInteger)index {
+    
+    CGFloat forwardPosition = 0;
+    
+    if (self.cellArray && [self.cellArray count] > 0) {
+        
+        ScrollMenuCell *initMenuCell = [self.cellArray objectAtIndex:0];
+        ScrollMenuCell *currentMenuCell = [self.cellArray objectAtIndex:index];
+        
+        if (index > 0) {
+            
+            forwardPosition = initMenuCell.cellSize.width / 2 + self.padding * index + currentMenuCell.cellSize.width / 2;
+            
+            for (NSInteger i = 1; i <= (currentMenuCell.cellIndex - 1); i++) {
+                
+                ScrollMenuCell *middleMenuCell = [self.cellArray objectAtIndex:i];
+                forwardPosition += middleMenuCell.cellSize.width;
+            }
+        }
+        else {
+            
+            forwardPosition = 0;
+        }
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            [self setContentOffset:CGPointMake(forwardPosition, 0)];
+        }];
+    }
+    else {
+        
+        NSLog(@"goToPositionWithIndex:  the Index = nil at Array");
+    }
 }
 
 
 //================================================================================
 // 移動scroll到滑動/拖曳後的位置 (不可使用系統預設的paging效果)
 //================================================================================
-- (NSInteger)moveToPositionWithEndScrollEvent:(UIScrollView *)scrollView
+- (NSInteger)IndexFromSelectionPositionWithEndScrollEvent:(UIScrollView *)scrollView
 {
     CGFloat detectedLeftBound = 0;
     CGFloat detectedRightBound = 0;
-    ScrollMenuCell *initMenuCell = [self.arrayOfCell objectAtIndex:0];
-    CGFloat initPosition = initMenuCell.sizeOfCell.width / 2;
+    ScrollMenuCell *initMenuCell = [self.cellArray objectAtIndex:0];
+    CGFloat initPosition = initMenuCell.cellSize.width / 2;
     
-    for (NSInteger i = 0; i < self.numberOfCell; i++) {
+    for (NSInteger i = 0; i < self.cellNumber; i++) {
         
-        ScrollMenuCell *currentMenuCell = [self.arrayOfCell objectAtIndex:i];
-        
+        ScrollMenuCell *currentMenuCell = [self.cellArray objectAtIndex:i];
         detectedLeftBound = currentMenuCell.leftBoundPosition - initPosition - (self.padding / 2);
         detectedRightBound = currentMenuCell.rightBoundPosition - initPosition + (self.padding / 2);
         
-        if (scrollView.contentOffset.x > detectedLeftBound && scrollView.contentOffset.x <= detectedRightBound) {
+        if (scrollView.contentOffset.x > detectedLeftBound && scrollView.contentOffset.x < detectedRightBound) {
             
             [UIView animateWithDuration:0.3 animations:^{
                 // 用右邊界來算比較簡潔，不要用左邊界，會有起始位置的問題
-                [self setContentOffset:CGPointMake(detectedRightBound - (self.padding / 2) - (currentMenuCell.sizeOfCell.width / 2) , 0)];
+                [self setContentOffset:CGPointMake(detectedRightBound - (self.padding / 2) - (currentMenuCell.cellSize.width / 2) , 0)];
             }];
             
             self.currentSelectedIndex = i;
@@ -193,14 +293,39 @@ const CGFloat paddigSize = 30.0f;
 //================================================================================
 // 以字數來計算該cell需要多少寬度
 //================================================================================
-- (CGSize)currentSizeOfCellWithString:(NSString *)contentString {
+- (CGSize)currentSizeOfCellWithScrollMenuCell:(ScrollMenuCell *)scrollMenuCell {
     
+    NSString *stringDisplayInCell = scrollMenuCell.cellTextView.cellTextLabel.text;
     UIFont *font = [UIFont systemFontOfSize:14];
     NSDictionary *textAttributes = @{NSFontAttributeName: font,
                                      NSForegroundColorAttributeName: [UIColor blackColor]};
-    const CGSize cellTextSize = [contentString sizeWithAttributes:textAttributes];
+    CGSize cellTextSize = [stringDisplayInCell sizeWithAttributes:textAttributes];
+        
+    UIImage *arrowImage = nil;
+    
+    if (self.menuViewType == MenuViewDefaultType) {
+        
+        if (scrollMenuCell.cellTextView.hasLevel0ChildToExpand) {
+                
+                arrowImage = [UIImage imageNamed:@"ch_drop_down_arrow_red"];
+        }
+    }
+    
+    scrollMenuCell.cellTextView.arrowImageView = [[UIImageView alloc] initWithImage:arrowImage];
+    scrollMenuCell.cellTextView.arrowImageView.frame = CGRectMake(scrollMenuCell.cellTextView.arrowImageView.frame.size.width + cellTextSize.width + self.padding * 2,
+                                                                  cellTextSize.height + scrollMenuCell.cellTextView.arrowImageView.frame.size.height / 2,
+                                                                  scrollMenuCell.cellTextView.arrowImageView.frame.size.width,
+                                                                  scrollMenuCell.cellTextView.arrowImageView.frame.size.height);
+    [scrollMenuCell.cellTextView addSubview:scrollMenuCell.cellTextView.arrowImageView];
+    CGFloat totalSizeWidth = cellTextSize.width + scrollMenuCell.cellTextView.arrowImageView.frame.size.width + self.padding;
+    cellTextSize = CGSizeMake(totalSizeWidth + (scrollMenuCell.cellTextView.arrowImageView.frame.size.width) * 2, cellTextSize.height);
+    [scrollMenuCell.cellTextView.arrowImageView setHidden:YES];
+    
     return cellTextSize;
 }
+
+
+
 
 
 #pragma mark -
@@ -218,9 +343,9 @@ const CGFloat paddigSize = 30.0f;
     
     CGFloat frameHeight = self.frame.size.height;
     
-    for (ScrollMenuCell *menuCell in self.arrayOfCell) {
+    for (ScrollMenuCell *menuCell in self.cellArray) {
     
-        CGFloat topY = (frameHeight - menuCell.sizeOfCell.height) / 2;
+        CGFloat topY = (frameHeight - menuCell.cellSize.height) / 2;
         
         BOOL yInCell = NO;
         
@@ -240,7 +365,7 @@ const CGFloat paddigSize = 30.0f;
             xInCell = YES;
         }
         
-        if (xInCellNumber < 0 || xInCellNumber >= self.numberOfCell) {
+        if (xInCellNumber < 0 || xInCellNumber >= self.cellNumber) {
             
             xInCell = NO;
         }
@@ -249,23 +374,23 @@ const CGFloat paddigSize = 30.0f;
         
         if (yInCell && xInCell) {
         
-            if (menuCell.indexOfCell - 1 < 0) {
+            if (menuCell.cellIndex - 1 < 0) {
                 
                 forwardPosition = 0;
             }
-            else
-            {
-                ScrollMenuCell *initMenuCell = [self.arrayOfCell objectAtIndex:0];
-                ScrollMenuCell *currentMenuCell = [self.arrayOfCell objectAtIndex:menuCell.indexOfCell];
+            else {
                 
-                if (menuCell.indexOfCell > 0) {
+                ScrollMenuCell *initMenuCell = [self.cellArray objectAtIndex:0];
+                ScrollMenuCell *currentMenuCell = [self.cellArray objectAtIndex:menuCell.cellIndex];
+                
+                if (menuCell.cellIndex > 0) {
                     
-                    forwardPosition = initMenuCell.sizeOfCell.width / 2 + self.padding * menuCell.indexOfCell + currentMenuCell.sizeOfCell.width / 2;
+                    forwardPosition = initMenuCell.cellSize.width / 2 + self.padding * menuCell.cellIndex + currentMenuCell.cellSize.width / 2;
                     
-                    for (NSInteger i = 1; i <= (currentMenuCell.indexOfCell - 1); i++) {
+                    for (NSInteger i = 1; i <= (currentMenuCell.cellIndex - 1); i++) {
                         
-                        ScrollMenuCell *middleMenuCell = [self.arrayOfCell objectAtIndex:i];
-                        forwardPosition += middleMenuCell.sizeOfCell.width;
+                        ScrollMenuCell *middleMenuCell = [self.cellArray objectAtIndex:i];
+                        forwardPosition += middleMenuCell.cellSize.width;
                     }
                 }
                 else {
@@ -274,7 +399,7 @@ const CGFloat paddigSize = 30.0f;
                 }
             }
             
-            xInCellNumber = menuCell.indexOfCell;
+            xInCellNumber = menuCell.cellIndex;
             
             if ([self.delegate respondsToSelector:@selector(scrollMenuView:didTapPageAtIndex:)]) {
                 
@@ -290,35 +415,35 @@ const CGFloat paddigSize = 30.0f;
 }
 
 
+
+
+
+#pragma mark -
+#pragma mark - Class Method
 //================================================================================
 //
 //================================================================================
-- (void)goToPositionWithIndex:(NSInteger)index {
-
-    CGFloat forwardPosition = 0;
-    ScrollMenuCell *initMenuCell = [self.arrayOfCell objectAtIndex:0];
-    ScrollMenuCell *currentMenuCell = [self.arrayOfCell objectAtIndex:index];
+- (void)initializeSetup
+{
+    _currentSelectedIndex = 0;
     
-    if (index > 0) {
-        
-        forwardPosition = initMenuCell.sizeOfCell.width / 2 + self.padding * index + currentMenuCell.sizeOfCell.width / 2;
-        
-        for (NSInteger i = 1; i <= (currentMenuCell.indexOfCell - 1); i++) {
-            
-            ScrollMenuCell *middleMenuCell = [self.arrayOfCell objectAtIndex:i];
-            forwardPosition += middleMenuCell.sizeOfCell.width;
-        }
-    }
-    else {
-        
-        forwardPosition = 0;
-    }
+    self.clipsToBounds = NO;
+    self.pagingEnabled = NO;
+    self.showsHorizontalScrollIndicator = NO;
+    self.showsVerticalScrollIndicator = NO;
+    self.autoresizesSubviews = NO;
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.multipleTouchEnabled = NO;
+    self.decelerationRate = UIScrollViewDecelerationRateFast;
     
-    [UIView animateWithDuration:0.3 animations:^{
-        [self setContentOffset:CGPointMake(forwardPosition, 0)];
-    }];
+    //////////////////////////////////////////////////
+    
+    _cellArray = [NSMutableArray array];
+    _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    [self.tapGesture setNumberOfTapsRequired:1];
+    [self.tapGesture setNumberOfTouchesRequired:1];
+    [self addGestureRecognizer:self.tapGesture];
+    self.scrollsToTop = NO;
 }
-
-
 
 @end

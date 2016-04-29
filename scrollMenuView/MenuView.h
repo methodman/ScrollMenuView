@@ -11,6 +11,8 @@
 
 #import "ScrollMenuView.h"
 
+#define ScreenSize  [UIScreen mainScreen].bounds.size
+
 @class MenuView;
 
 //////////////////////////////////////////////////
@@ -19,6 +21,7 @@
 
 @required
 - (void)endScrollingAction:(MenuView *)menu index:(NSInteger)index;
+- (void)tapTheSameMenuCell:(MenuView *)menu index:(NSInteger)index;
 
 @end
 
@@ -27,11 +30,17 @@
 
 @property (nonatomic, assign) id<MenuViewDelegate> delegate;
 @property (nonatomic, strong) ScrollMenuView *scrollMenuView;
-@property (nonatomic, retain) NSArray *dataArray; // Model
+@property (nonatomic, strong) UIView *fakeBackgroundView;
+@property (nonatomic, retain) NSMutableArray *dataArray; // Model
 @property (nonatomic, assign) CGFloat viewInPositionY;
 @property (nonatomic, assign) CGFloat scrollViewHeight;
 
+- (instancetype)initWithFrame:(CGRect)frame andMenuViewType:(MenuViewType)menuViewType;
+
+- (void)setViewStyleByMenuViewType:(MenuViewType)menuViewType;
+- (void)setDisplayBackGroundColor:(UIColor *)color;
 - (void)scrollingPostionWithIndex:(NSInteger)index;
 - (void)setLeftRightWithGradientImage:(UIImage *)leftImage rightImage:(UIImage *)rightImage;
+- (void)prepareDataModelWithArray:(NSArray *)dataArray assignIndex:(NSInteger)assignIndex;
 
 @end

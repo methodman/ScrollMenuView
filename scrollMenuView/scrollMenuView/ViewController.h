@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "MenuView.h"
+#import "TestViewController.h"
 
-@interface ViewController : UIViewController <MenuViewDelegate>
+@interface ViewController : UIViewController <MenuViewDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, retain) MenuView *menuView;
+@property (nonatomic, retain) UIScrollView *mainScrollView;
+@property (nonatomic, retain) TestViewController *testViewController;
 
 @end
 

@@ -8,13 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import "ScrollMenuCellSubView.h"
 
 @interface ScrollMenuCell : NSObject
 
-@property (nonatomic, assign) CGSize sizeOfCell;
-@property (nonatomic, assign) NSInteger indexOfCell;
-@property (nonatomic, assign) CGFloat leftBoundPosition;
-@property (nonatomic, assign) CGFloat rightBoundPosition;
-@property (nonatomic, retain) UIView  *cellTextView;
+@property (nonatomic, assign) CGSize                   cellSize;
+@property (nonatomic, assign) NSInteger                cellIndex;
+@property (nonatomic, assign) CGFloat                  leftBoundPosition;
+@property (nonatomic, assign) CGFloat                  rightBoundPosition;
+@property (nonatomic, retain) ScrollMenuCellSubView    *cellTextView;
+@property (nonatomic, assign) BOOL                     isSelected;
+@property (nonatomic, strong) UIColor                  *unSelectedColor;
+@property (nonatomic, strong) UIColor                  *selectedColor;
 
 @end

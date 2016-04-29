@@ -18,6 +18,8 @@
 		D148C8B51C902B2C00CE5354 /* ScrollMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = D148C8B41C902B2C00CE5354 /* ScrollMenuView.m */; };
 		D148C8B81C902CE900CE5354 /* MenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = D148C8B71C902CE900CE5354 /* MenuView.m */; };
 		D1C830771C92712500F20DB8 /* ScrollMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D1C830761C92712500F20DB8 /* ScrollMenuCell.m */; };
+		D1ED08B71CC5D570000CBC52 /* ScrollMenuCellSubView.m in Sources */ = {isa = PBXBuildFile; fileRef = D1ED08B61CC5D570000CBC52 /* ScrollMenuCellSubView.m */; };
+		D1ED08C31CCF5DF9000CBC52 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1ED08C21CCF5DF9000CBC52 /* TestViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,10 @@
 		D148C8B71C902CE900CE5354 /* MenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuView.m; sourceTree = "<group>"; };
 		D1C830751C92712500F20DB8 /* ScrollMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollMenuCell.h; sourceTree = "<group>"; };
 		D1C830761C92712500F20DB8 /* ScrollMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollMenuCell.m; sourceTree = "<group>"; };
+		D1ED08B51CC5D570000CBC52 /* ScrollMenuCellSubView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollMenuCellSubView.h; sourceTree = "<group>"; };
+		D1ED08B61CC5D570000CBC52 /* ScrollMenuCellSubView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollMenuCellSubView.m; sourceTree = "<group>"; };
+		D1ED08C11CCF5DF9000CBC52 /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		D1ED08C21CCF5DF9000CBC52 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +96,8 @@
 		D148C8741C902AE000CE5354 = {
 			isa = PBXGroup;
 			children = (
+				D1ED08B51CC5D570000CBC52 /* ScrollMenuCellSubView.h */,
+				D1ED08B61CC5D570000CBC52 /* ScrollMenuCellSubView.m */,
 				D1C830751C92712500F20DB8 /* ScrollMenuCell.h */,
 				D1C830761C92712500F20DB8 /* ScrollMenuCell.m */,
 				D148C8B61C902CE900CE5354 /* MenuView.h */,
@@ -125,6 +133,8 @@
 				D148C88E1C902AE000CE5354 /* LaunchScreen.storyboard */,
 				D148C8911C902AE000CE5354 /* Info.plist */,
 				D148C8801C902AE000CE5354 /* Supporting Files */,
+				D1ED08C11CCF5DF9000CBC52 /* TestViewController.h */,
+				D1ED08C21CCF5DF9000CBC52 /* TestViewController.m */,
 			);
 			path = scrollMenuView;
 			sourceTree = "<group>";
@@ -287,9 +297,11 @@
 			files = (
 				D148C8881C902AE000CE5354 /* ViewController.m in Sources */,
 				D148C8851C902AE000CE5354 /* AppDelegate.m in Sources */,
+				D1ED08B71CC5D570000CBC52 /* ScrollMenuCellSubView.m in Sources */,
 				D148C8B51C902B2C00CE5354 /* ScrollMenuView.m in Sources */,
 				D148C8821C902AE000CE5354 /* main.m in Sources */,
 				D148C8B81C902CE900CE5354 /* MenuView.m in Sources */,
+				D1ED08C31CCF5DF9000CBC52 /* TestViewController.m in Sources */,
 				D1C830771C92712500F20DB8 /* ScrollMenuCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
